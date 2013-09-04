@@ -21778,6 +21778,7 @@
         SelectionChanged: "SelectionChanged",
         SheetTabClick: "SheetTabClick",
         SheetTabDoubleClick: "SheetTabDoubleClick",
+        SheetTabEditEnd: "SheetTabEditEnd",
         UserZooming: "UserZooming",
         UserFormulaEntered: "UserFormulaEntered",
         CellChanged: "CellChanged",
@@ -46295,11 +46296,13 @@
                 else if(hitTestInfo.element === hit_element_newTab)
                 {
                     var spread = this._spread;
-                    spread._trigger(E.SheetTabClick,{
+                    spread._trigger(E.SheetTabClick,args={
                         sheet: null,
                         sheetName: null,
                         sheetTabIndex: -1
                     });
+                    if (args && args.cancel===true)
+                        return false
                     var index = this._spread.sheets.length;
                     sheet = this._spread._createSheet(this._spread._getDefaultSheetName(index));
                     this._spread.addSheet(index,sheet);
@@ -46422,8 +46425,6 @@
         },
         doMouseDbClick: function(e)
         {
-            if(!this._spread._tabEditable)
-                return false;
             var offset = $(this._getCanvas()).offset();
             var left = e.pageX - offset.left;
             var top = e.pageY - offset.top;
@@ -46438,11 +46439,17 @@
                 var currentSheet = this._spread.sheets[tabIndex];
                 var currentTabSize = this._tabSizes[tabIndex];
                 var canvasOffset = $(this._getCanvas()).offset();
-                this._spread._trigger(UI.Events.SheetTabDoubleClick,{
+                var args;
+                this._spread._trigger(UI.Events.SheetTabDoubleClick,args={
                     sheet: currentSheet,
                     sheetName: currentSheet._name,
-                    sheetTabIndex: tabIndex
+                    sheetTabIndex: tabIndex,
+                    cancel: false
                 });
+                if(args && args.cancel === true)
+                    return false;
+                if(!this._spread._tabEditable)
+                    return false;
                 var t = document.createElement(tag_input);
                 t.type = "text";
                 t.value = currentSheet._name;
@@ -46507,6 +46514,16 @@
             if(this._tabNameEditor)
             {
                 var newName = this._tabNameEditor.value;
+                var args;
+                this._spread._trigger(UI.Events.SheetTabEditEnd,args={
+                    sheet: sheet,
+                    sheetName: sheet._name,
+                    sheetTabIndex: this._activeIndex,
+                    editingText: newName,
+                    cancel: false
+                });
+                if(args&&args.cancel)
+                    return
                 if(cancel === false && newName !== undefined && newName !== null && newName !== "" && this._isValidSheetName(newName))
                 {
                     var action = new UI.UndoRedo.SheetRenameUndoAction(sheet,newName);
