@@ -27145,7 +27145,7 @@
     {
         this.value = obj
     }
-    var char = {
+    var Ichar = {
             IsDigit: function(c)
             {
                 var cc = c.charCodeAt(0);
@@ -30085,14 +30085,14 @@
         var strTemp = s;
         var firstDigital = -1;
         for(var fd = 0; fd < strTemp.length; fd++)
-            if(char.IsDigit(strTemp[fd]))
+            if(Ichar.IsDigit(strTemp[fd]))
             {
                 firstDigital = fd;
                 break
             }
         var lastDigital = -1;
         for(var ld = strTemp.length - 1; ld > -1; ld--)
-            if(char.IsDigit(strTemp[ld]))
+            if(Ichar.IsDigit(strTemp[ld]))
             {
                 lastDigital = ld;
                 break
@@ -30101,7 +30101,7 @@
         {
             var c = strTemp[n];
             if(this.IsSpecialSymbol(c))
-                if(char.IsWhiteSpace(c))
+                if(Ichar.IsWhiteSpace(c))
                 {
                     if(n < firstDigital || lastDigital < n)
                         strTemp = StringHelper.Remove(strTemp,n,1)
@@ -30130,7 +30130,7 @@
     {
         if(this.IsStandardNumberSymbol(c))
             return false;
-        if(char.IsWhiteSpace(c))
+        if(Ichar.IsWhiteSpace(c))
             return true;
         return false
     };
@@ -77209,4 +77209,3 @@
     spread.HyperLinkCellType = UI.HyperLinkCellType;
     spread.CustomCellType = UI.CustomCellType
 })(this,jQuery)
-
